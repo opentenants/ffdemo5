@@ -3,7 +3,7 @@ $MEDIA_1
 -i
 $MEDIA_2
 -filter_complex
-[0:v]setpts=PTS-STARTPTS,crop=in_w-676:in_h-0:327:0,scale=iw*0.34:ih*0.34,crop=min(iw\,ih):min(iw\,ih),format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='255*clip(W/2-hypot(X+0.5-W/2,Y+0.5-H/2)+0.5,0,1)',split[original][dummy];[dummy]scale=1920:1080,geq=0:128:128[base];[base][original]overlay=x='(W-w)/2+(1536-(W-w)/2)*clip((t-1)/3,0,1)':y='(H-h)/2+(725-(H-h)/2)*clip((t-1)/3,0,1)',fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v0?];
+[0:v]setpts=PTS-STARTPTS,crop=in_w-676:in_h-0:327:0,crop=min(iw\,ih):min(iw\,ih),format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='255*clip(W/2-hypot(X+0.5-W/2,Y+0.5-H/2)+0.5,0,1)',split[original][dummy];[original]scale=w='iw*(1-0.66*clip((t-1)/3,0,1))':h='ih*(1-0.66*clip((t-1)/3,0,1))':eval=frame[animated];[dummy]scale=1920:1080,geq=0:128:128[base];[base][animated]overlay=x='(W-w)/2+(1536-(W-w)/2)*clip((t-1)/3,0,1)':y='(H-h)/2+(725-(H-h)/2)*clip((t-1)/3,0,1)',fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v0?];
 [v0?]settb=expr=1/30[v_layer0];
 [1:v]setpts=PTS-STARTPTS,setdar=16/9,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,setsar=1,format=rgba,fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v1?];
 [v1?]settb=expr=1/30[v_layer1];
