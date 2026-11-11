@@ -3,12 +3,10 @@ $MEDIA_1
 -i
 $MEDIA_2
 -filter_complex
-[0:v]setpts=PTS-STARTPTS,crop=in_w-676:in_h-0:327:0,scale=iw*0.34:ih*0.34,crop=min(iw\,ih):min(iw\,ih),format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='255*clip(W/2-hypot(X+0.5-W/2,Y+0.5-H/2)+0.5,0,1)',split[original][dummy];[dummy]scale=1920:1080,geq=0:128:128[base];[base][original]overlay=x=1536:y=725,fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v0?];
-[v0?]settb=expr=1/30[v_layer0];
-[1:v]setpts=PTS-STARTPTS,setdar=16/9,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,setsar=1,format=rgba,fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v1?];
-[v1?]settb=expr=1/30[v_layer1];
-[v_layer1][v_layer0]overlay[overlay1];
-[overlay1]split[v_main][v_overlay];[v_main]settb=expr=1/30[v_concat];[v_overlay]nullsink;
+[0:v]setpts=PTS-STARTPTS,crop=in_w-676:in_h-0:327:0,crop=min(iw\,ih):min(iw\,ih),fps=fps=30,scale=w='if(lte(t,2),1080,if(lt(t,5),1080-760*(t-2)/3,320))':h='if(lte(t,2),1080,if(lt(t,5),1080-760*(t-2)/3,320))':flags=lanczos:eval=frame,format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='255*clip(W/2-hypot(X+0.5-W/2,Y+0.5-H/2)+0.5,0,1)',setsar=1,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v_layer0];
+[1:v]setpts=PTS-STARTPTS,setdar=16/9,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black,setsar=1,format=rgba,fps=fps=30,settb=expr=1/30,colorchannelmixer=rr=1:gg=1:bb=1:aa=1[v_layer1];
+[v_layer1][v_layer0]overlay=x='if(lte(t,2),(main_w-overlay_w)/2,if(lt(t,5),960+736*(t-2)/3-overlay_w/2,1536))':y='if(lte(t,2),(main_h-overlay_h)/2,if(lt(t,5),540+345*(t-2)/3-overlay_h/2,725))':eval=frame:eof_action=repeat[overlay1];
+[overlay1]settb=expr=1/30[v_concat];
 [0:a]asetpts=PTS-STARTPTS,apad[a_concat]
 -aspect
 16/9
